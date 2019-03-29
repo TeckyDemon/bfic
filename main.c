@@ -8,7 +8,7 @@
 
 int main(int argc,char** argv){
 	if(argc!=2){
-		puts("Usage: main <source>");
+		puts("Usage: bfic <source>");
 		exit(OTHER_ERROR);
 	}
 	unsigned char* tape=calloc(TAPE_SIZE,1);
