@@ -12,24 +12,24 @@ int main(int argc,char** argv){
 		exit(OTHER_ERROR);
 	}
 	unsigned char* tape=calloc(TAPE_SIZE,1);
-    if(tape==NULL){
+	if(tape==NULL){
 		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",(size_t)TAPE_SIZE*1);
 		exit(ALLOCATION_ERROR);
-    }
+	}
 	unsigned char* tape_ptr=tape;
 	FILE* input_file=fopen(argv[1],"rb");
-    if(input_file==NULL){
+	if(input_file==NULL){
 		fprintf(stderr,"Error: failed to open file %s\n",argv[1]);
 		exit(FILE_ERROR);
-    }
+	}
 	fseek(input_file,0,SEEK_END);
 	size_t code_size=(size_t)ftell(input_file);
 	fseek(input_file,0,SEEK_SET);
 	unsigned char* code=malloc(code_size+1);
-    if(code==NULL){
+	if(code==NULL){
 		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",code_size+1);
 		exit(ALLOCATION_ERROR);
-    }
+	}
 	if(fread(code,1,code_size,input_file)!=code_size){
 		fprintf(stderr,"Error: failed to read from file %s\n",argv[1]);
 		exit(FILE_ERROR);
