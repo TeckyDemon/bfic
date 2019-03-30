@@ -34,6 +34,7 @@ int main(int argc,char** argv){
 		fprintf(stderr,"Error: failed to read from file %s\n",argv[1]);
 		exit(FILE_ERROR);
 	}
+	fclose(input_file);
 	code[code_size]=0;
 	for(unsigned char* code_ptr=code;*code_ptr;++code_ptr){
 		switch(*code_ptr){
