@@ -6,22 +6,15 @@
 #define OTHER_ERROR 3
 #define TAPE_SIZE 30000
 
-int main(int argc,char** argv){
-	if(argc!=2){
-		puts("Usage: bfic <source>");
-		exit(OTHER_ERROR);
-	}
-	unsigned char* tape=calloc(TAPE_SIZE,1);
-	if(tape==NULL){
-		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",(size_t)TAPE_SIZE*1);
-		exit(ALLOCATION_ERROR);
-	}
-	unsigned char* tape_ptr=tape;
-	FILE* input_file=fopen(argv[1],"rb");
+FILE* get_file_handle(const char* filename){
+	FILE* input_file=fopen(filename,"rb");
 	if(input_file==NULL){
-		fprintf(stderr,"Error: failed to open file %s\n",argv[1]);
+		fprintf(stderr,"Error: failed to open file %s\n",filename);
 		exit(FILE_ERROR);
 	}
+	return input_file;
+}
+unsigned char* read_code(FILE* input_file){
 	fseek(input_file,0,SEEK_END);
 	size_t code_size=(size_t)ftell(input_file);
 	fseek(input_file,0,SEEK_SET);
@@ -31,11 +24,22 @@ int main(int argc,char** argv){
 		exit(ALLOCATION_ERROR);
 	}
 	if(fread(code,1,code_size,input_file)!=code_size){
-		fprintf(stderr,"Error: failed to read from file %s\n",argv[1]);
+		perror("Error: failed to read from file\n");
 		exit(FILE_ERROR);
 	}
-	fclose(input_file);
 	code[code_size]=0;
+	return code;
+}
+void run(const char* filename){
+	FILE* input_file=get_file_handle(filename);
+	unsigned char* tape=calloc(TAPE_SIZE,1);
+	if(tape==NULL){
+		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",(size_t)TAPE_SIZE*1);
+		exit(ALLOCATION_ERROR);
+	}
+	unsigned char* tape_ptr=tape;
+	unsigned char* code=read_code(input_file);
+	fclose(input_file);
 	for(unsigned char* code_ptr=code;*code_ptr;++code_ptr){
 		switch(*code_ptr){
 			case '>':
@@ -58,31 +62,29 @@ int main(int argc,char** argv){
 				fflush(stdout);
 				break;
 			case '[':
-				if(!*tape_ptr){
+			case ']':{
+				int is_right_bracket=']'==*code_ptr;
+				if(is_right_bracket?*tape_ptr:!*tape_ptr){
 					int loop=1;
 					while(loop){
-						++code_ptr;
+						is_right_bracket?--code_ptr:++code_ptr;
 						if(*code_ptr=='[')
-							++loop;
+							is_right_bracket?--loop:++loop;
 						if(*code_ptr==']')
-							--loop;
+							is_right_bracket?++loop:--loop;
 					}
 				}
 				break;
-			case ']':
-				if(*tape_ptr){
-					int loop=1;
-					while(loop){
-						--code_ptr;
-						if(*code_ptr=='[')
-							--loop;
-						if(*code_ptr==']')
-							++loop;
-					}
-				}
-				break;
+			}
 		}
 	}
 	free(tape);
 	free(code);
+}
+int main(int argc,char** argv){
+	if(argc!=2){
+		puts("Usage: bfic <source>");
+		exit(OTHER_ERROR);
+	}
+	run(argv[1]);
 }
