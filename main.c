@@ -38,6 +38,19 @@ unsigned char* create_tape(){
 	}
 	return tape;
 }
+void find_matching_bracket(unsigned char** tape_ptr,unsigned char** code_ptr){
+	int is_right_bracket=']'==**code_ptr;
+	if(is_right_bracket?**tape_ptr:!**tape_ptr){
+		int loop=1;
+		while(loop){
+			is_right_bracket?--*code_ptr:++*code_ptr;
+			if(**code_ptr=='[')
+				is_right_bracket?--loop:++loop;
+			if(**code_ptr==']')
+				is_right_bracket?++loop:--loop;
+		}
+	}
+}
 void run(const char* filename){
 	FILE* input_file=get_file_handle(filename);
 	unsigned char *tape=create_tape(),*tape_ptr=tape;
@@ -65,20 +78,9 @@ void run(const char* filename){
 				fflush(stdout);
 				break;
 			case '[':
-			case ']':{
-				int is_right_bracket=']'==*code_ptr;
-				if(is_right_bracket?*tape_ptr:!*tape_ptr){
-					int loop=1;
-					while(loop){
-						is_right_bracket?--code_ptr:++code_ptr;
-						if(*code_ptr=='[')
-							is_right_bracket?--loop:++loop;
-						if(*code_ptr==']')
-							is_right_bracket?++loop:--loop;
-					}
-				}
+			case ']':
+				find_matching_bracket(&tape_ptr,&code_ptr);
 				break;
-			}
 		}
 	}
 	free(tape);
