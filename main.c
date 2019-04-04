@@ -30,17 +30,20 @@ unsigned char* read_code(FILE* input_file){
 	code[code_size]=0;
 	return code;
 }
-void run(const char* filename){
-	FILE* input_file=get_file_handle(filename);
+unsigned char* create_tape(){
 	unsigned char* tape=calloc(TAPE_SIZE,1);
 	if(tape==NULL){
 		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",(size_t)TAPE_SIZE*1);
 		exit(ALLOCATION_ERROR);
 	}
-	unsigned char* tape_ptr=tape;
-	unsigned char* code=read_code(input_file);
+	return tape;
+}
+void run(const char* filename){
+	FILE* input_file=get_file_handle(filename);
+	unsigned char *tape=create_tape(),*tape_ptr=tape;
+	unsigned char *code=read_code(input_file),*code_ptr=code;
 	fclose(input_file);
-	for(unsigned char* code_ptr=code;*code_ptr;++code_ptr){
+	for(;*code_ptr;++code_ptr){
 		switch(*code_ptr){
 			case '>':
 				++tape_ptr;
