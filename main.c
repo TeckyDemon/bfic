@@ -45,13 +45,13 @@ static inline void
 find_matching_bracket(unsigned char** tape_ptr,unsigned char** code_ptr){
 	int is_right_bracket=']'==**code_ptr;
 	if(is_right_bracket?**tape_ptr:!**tape_ptr){
-		int loop=1;
-		while(loop){
+		int depth=1;
+		while(depth>0){
 			is_right_bracket?--*code_ptr:++*code_ptr;
 			if(**code_ptr=='[')
-				is_right_bracket?--loop:++loop;
+				is_right_bracket?--depth:++depth;
 			if(**code_ptr==']')
-				is_right_bracket?++loop:--loop;
+				is_right_bracket?++depth:--depth;
 		}
 	}
 }
