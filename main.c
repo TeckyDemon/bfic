@@ -4,9 +4,9 @@
 #define ALLOCATION_ERROR 1
 #define FILE_ERROR 2
 #define OTHER_ERROR 3
-#define TAPE_SIZE 30000
+#define TAPE_SIZE ((size_t)300000)
 
-FILE* get_file_handle(const char* filename){
+static inline FILE* get_file_handle(const char* filename){
 	FILE* input_file=fopen(filename,"rb");
 	if(input_file==NULL){
 		fprintf(stderr,"Error: failed to open file %s\n",filename);
@@ -14,7 +14,7 @@ FILE* get_file_handle(const char* filename){
 	}
 	return input_file;
 }
-unsigned char* read_code(FILE* input_file){
+static inline unsigned char* read_code(FILE* input_file){
 	fseek(input_file,0,SEEK_END);
 	size_t code_size=(size_t)ftell(input_file);
 	fseek(input_file,0,SEEK_SET);
@@ -30,15 +30,15 @@ unsigned char* read_code(FILE* input_file){
 	code[code_size]=0;
 	return code;
 }
-unsigned char* create_tape(){
+static inline unsigned char* create_tape(){
 	unsigned char* tape=calloc(TAPE_SIZE,1);
 	if(tape==NULL){
-		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",(size_t)TAPE_SIZE*1);
+		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",TAPE_SIZE*1);
 		exit(ALLOCATION_ERROR);
 	}
 	return tape;
 }
-void find_matching_bracket(unsigned char** tape_ptr,unsigned char** code_ptr){
+static inline void find_matching_bracket(unsigned char** tape_ptr,unsigned char** code_ptr){
 	int is_right_bracket=']'==**code_ptr;
 	if(is_right_bracket?**tape_ptr:!**tape_ptr){
 		int loop=1;
@@ -51,10 +51,12 @@ void find_matching_bracket(unsigned char** tape_ptr,unsigned char** code_ptr){
 		}
 	}
 }
-void run(const char* filename){
+static inline void run(const char* filename){
 	FILE* input_file=get_file_handle(filename);
-	unsigned char *tape=create_tape(),*tape_ptr=tape;
-	unsigned char *code=read_code(input_file),*code_ptr=code;
+	unsigned char* tape=create_tape();
+	unsigned char* tape_ptr=tape;
+	unsigned char* code=read_code(input_file);
+	unsigned char* code_ptr=code;
 	fclose(input_file);
 	for(;*code_ptr;++code_ptr){
 		switch(*code_ptr){
@@ -86,10 +88,13 @@ void run(const char* filename){
 	free(tape);
 	free(code);
 }
-int main(int argc,char** argv){
+static inline void parse_args(int argc){
 	if(argc!=2){
 		puts("Usage: bfic <source>");
 		exit(OTHER_ERROR);
 	}
+}
+int main(int argc,char** argv){
+	parse_args(argc);
 	run(argv[1]);
 }
