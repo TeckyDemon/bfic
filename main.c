@@ -1,13 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define ALLOCATION_ERROR 1
 #define FILE_ERROR 2
 #define OTHER_ERROR 3
 #define TAPE_SIZE ((size_t)300000)
 
+static inline void*
+xmalloc(size_t size){
+	void* pointer=malloc(size);
+	if(pointer==NULL){
+		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",TAPE_SIZE*1);
+		exit(ALLOCATION_ERROR);
+	}
+	return pointer;
+}
+static inline void*
+xcalloc(size_t nitems,size_t size){
+	void* pointer=xmalloc(nitems*size);
+	memset(pointer,0,nitems*size);
+	return pointer;
+}
 static inline FILE*
-get_file_handle(const char* filename){
+xfopen(const char* filename){
 	FILE* input_file=fopen(filename,"rb");
 	if(input_file==NULL){
 		fprintf(stderr,"Error: failed to open file %s\n",filename);
@@ -20,11 +36,7 @@ read_code(FILE* input_file){
 	fseek(input_file,0,SEEK_END);
 	size_t code_size=(size_t)ftell(input_file);
 	fseek(input_file,0,SEEK_SET);
-	unsigned char* code=malloc(code_size+1);
-	if(code==NULL){
-		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",code_size+1);
-		exit(ALLOCATION_ERROR);
-	}
+	unsigned char* code=xmalloc(code_size+1);
 	if(fread(code,1,code_size,input_file)!=code_size){
 		perror("Error: failed to read from file\n");
 		exit(FILE_ERROR);
@@ -34,11 +46,7 @@ read_code(FILE* input_file){
 }
 static inline unsigned char*
 create_tape(){
-	unsigned char* tape=calloc(TAPE_SIZE,1);
-	if(tape==NULL){
-		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",TAPE_SIZE*1);
-		exit(ALLOCATION_ERROR);
-	}
+	unsigned char* tape=xcalloc(TAPE_SIZE,1);
 	return tape;
 }
 static inline void
@@ -57,7 +65,7 @@ find_matching_bracket(unsigned char** tape_ptr,unsigned char** code_ptr){
 }
 static inline void
 run(const char* filename){
-	FILE* input_file=get_file_handle(filename);
+	FILE* input_file=xfopen(filename);
 	unsigned char* tape=create_tape();
 	unsigned char* tape_ptr=tape;
 	unsigned char* code=read_code(input_file);
