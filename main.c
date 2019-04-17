@@ -11,15 +11,18 @@ static inline void*
 xmalloc(size_t size){
 	void* pointer=malloc(size);
 	if(pointer==NULL){
-		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",TAPE_SIZE*1);
+		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",size);
 		exit(ALLOCATION_ERROR);
 	}
 	return pointer;
 }
 static inline void*
 xcalloc(size_t nitems,size_t size){
-	void* pointer=xmalloc(nitems*size);
-	memset(pointer,0,nitems*size);
+	void* pointer=calloc(nitems,size);
+	if(pointer==NULL){
+		fprintf(stderr,"Fatal: failed to allocate %zu bytes.\n",nitems*size);
+		exit(ALLOCATION_ERROR);
+	}
 	return pointer;
 }
 static inline FILE*
