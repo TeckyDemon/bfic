@@ -44,11 +44,6 @@ read_code(FILE* input_file){
 	code[code_size]=0;
 	return code;
 }
-static inline unsigned char*
-create_tape(){
-	unsigned char* tape=xcalloc(TAPE_SIZE,1);
-	return tape;
-}
 static inline void
 find_matching_bracket(unsigned char** tape_ptr,unsigned char** code_ptr){
 	int is_right_bracket=']'==**code_ptr;
@@ -66,7 +61,7 @@ find_matching_bracket(unsigned char** tape_ptr,unsigned char** code_ptr){
 static inline void
 run(const char* filename){
 	FILE* input_file=xfopen(filename);
-	unsigned char* tape=create_tape();
+	unsigned char* tape=xcalloc(TAPE_SIZE,1);
 	unsigned char* tape_ptr=tape;
 	unsigned char* code=read_code(input_file);
 	unsigned char* code_ptr=code;
