@@ -6,5 +6,3 @@ all: main.o
 	$(RM) *.o
 %.o: %.c
 	$(CC) -c $? -o $@ $(CFLAGS)
-debug: CFLAGS+=-fsanitize=address
-debug: all
