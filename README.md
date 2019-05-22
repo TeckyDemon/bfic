@@ -9,8 +9,8 @@
   - [Windows](Windows)
 - [Installation](#installation)
 - [Usage](#usage)
-- [TODO](#todo)
 - [Authors](#authors)
+- [Contact](#contact)
 - [License](#license)
 
 ## Prerequisites
@@ -34,13 +34,13 @@ Run code from **PATH** file:
 
 `bfic <PATH>`
 
-## TODO
-
-* Optimizations.
-
 ## Authors
 
 * **Michał Wróblewski** - Main Developer - [DeBos99](https://github.com/DeBos99)
+
+## Contact
+
+Discord: DeBos#3292
 
 ## License
 
