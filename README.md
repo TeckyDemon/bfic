@@ -23,9 +23,7 @@ Install **make** and **mingw**.
 
 ```
 git clone "https://github.com/DeBos99/bfic.git"
-cd bfic
-make
-cd ..
+make -C bfic
 ```
 
 ## Usage
