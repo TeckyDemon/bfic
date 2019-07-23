@@ -1,0 +1,6 @@
+*
+!.gitignore
+!LICENSE
+!main.c
+!makefile
+!README.md
