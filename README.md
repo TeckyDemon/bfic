@@ -88,9 +88,7 @@ make -C bfic
 
 ## Usage
 
-Run code from **PATH** file:
-
-`bfic <PATH>`
+`bfic FILE`
 
 ## Authors
 
